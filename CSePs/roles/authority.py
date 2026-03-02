@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import serialization
+from cryptography.exceptions import InvalidTag
 
 AUTHORITY_FOLDER = "storage/authority"
 
@@ -72,7 +73,7 @@ def decrypt_with_evaluators(encrypted_bid):
 
     # Ensure all evaluators derived same AES key
     if not all(k == recovered_keys[0] for k in recovered_keys):
-        raise Exception("Evaluator keys mismatch!")
+        raise ValueError("Evaluator keys mismatch!")
 
     aesgcm = AESGCM(recovered_keys[0])
     return aesgcm.decrypt(nonce, ciphertext, None)
@@ -128,8 +129,15 @@ def open_all_bids():
             print("Hash matches?", recalculated_hash == bid_record["hash"])
             print("Signature valid?", signature_valid)
 
+        except ValueError as e:
+            if "Evaluator keys mismatch!" in str(e):
+                print("Evaluator keys are wrong, cannot open the bid")
+            else:
+                print("Bid is tampered! Data corruption detected")
+        except InvalidTag:
+            print("Bid is tampered! Decryption failed.")
         except Exception as e:
-            print("Error processing bid Possibly due to tampering:", e)
+            print("Error processing bid:", e)
 
 
 def reveal_winner_identity():
