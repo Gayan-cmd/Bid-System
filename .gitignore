@@ -1,0 +1,9 @@
+# Python caches
+__pycache__/
+
+# Virtual environments
+.venv/
+venv/
+
+# Project storage (DO NOT DELETE THIS LINE)
+storage/
