@@ -8,10 +8,9 @@ def authority_menu():
     while True:
         print("\n=== [ AUTHORITY MENU ] ===")
         print("1. Setup Authority Keys")
-        print("2. Register New Evaluator")
-        print("3. Configure Procurement Deadline")
-        print("4. Open All Bids")
-        print("5. Reveal Winner's True Identity")
+        print("2. Configure Procurement Deadline")
+        print("3. Initiate Bid Opening Ceremony")
+        print("4. Reveal Winner's True Identity")
         print("0. Back to Main Menu")
         
         choice = input("Select option: ")
@@ -19,13 +18,27 @@ def authority_menu():
         if choice == "1":
             setup_authority()
         elif choice == "2":
-            register_evaluator()
-        elif choice == "3":
             configure_procurement()
-        elif choice == "4":
+        elif choice == "3":
             open_all_bids()
-        elif choice == "5":
+        elif choice == "4":
             reveal_winner_identity()
+        elif choice == "0":
+            break
+        else:
+            print("Invalid option.")
+
+
+def evaluator_menu():
+    while True:
+        print("\n=== [ EVALUATOR MENU ] ===")
+        print("1. Register as New Evaluator")
+        print("0. Back to Main Menu")
+        
+        choice = input("Select option: ")
+        
+        if choice == "1":
+            register_evaluator()
         elif choice == "0":
             break
         else:
@@ -87,8 +100,9 @@ def main_menu():
         print("========================================")
         print("Select Your Role:")
         print("1. Authority")
-        print("2. Bidder")
-        print("3. Public Auditor")
+        print("2. Evaluator")
+        print("3. Bidder")
+        print("4. Public Auditor")
         print("0. Exit Application")
         
         choice = input("Select role: ")
@@ -96,8 +110,10 @@ def main_menu():
         if choice == "1":
             authority_menu()
         elif choice == "2":
-            bidder_menu()
+            evaluator_menu()
         elif choice == "3":
+            bidder_menu()
+        elif choice == "4":
             public_menu()
         elif choice == "0":
             print("Exiting CSePS...")
