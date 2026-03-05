@@ -7,11 +7,16 @@ def generate_ecc_keypair():
     return private_key, public_key
 
 
-def save_private_key(private_key, filepath):
+def save_private_key(private_key, filepath, password=None):
+    if password:
+        encryption_alg = serialization.BestAvailableEncryption(password.encode())
+    else:
+        encryption_alg = serialization.NoEncryption()
+
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption()
+        encryption_algorithm=encryption_alg
     )
     with open(filepath, "wb") as f:
         f.write(pem)
@@ -26,11 +31,12 @@ def save_public_key(public_key, filepath):
         f.write(pem)
         
 
-def load_private_key(filepath):
+def load_private_key(filepath, password=None):
     with open(filepath, "rb") as f:
+        pwd_bytes = password.encode() if password else None
         return serialization.load_pem_private_key(
             f.read(),
-            password=None
+            password=pwd_bytes
         )
 
 

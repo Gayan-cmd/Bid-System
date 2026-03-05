@@ -1,6 +1,7 @@
 import os
 import json
 import uuid
+import getpass
 from crypto.ecc_keys import generate_ecc_keypair, save_private_key, save_public_key,load_private_key,load_public_key
 from crypto.hash_utils import sha256_hash
 from crypto.sign_verify import sign_data,verify_signature
@@ -28,6 +29,10 @@ def register_bidder():
     print("\n=== Bidder Registration ===")
 
     bidder_name = input("Enter your name: ")
+    password = getpass.getpass("Create a password to protect your Bidder private key: ")
+    if not password:
+         print("Password cannot be empty!")
+         return
 
     # Generate pseudonymous ID
     bidder_id = str(uuid.uuid4())
@@ -41,7 +46,7 @@ def register_bidder():
     private_path = os.path.join(bidder_folder, "private.pem")
     public_path = os.path.join(bidder_folder, "public.pem")
 
-    save_private_key(private_key, private_path)
+    save_private_key(private_key, private_path, password)
     save_public_key(public_key, public_path)
 
     # Encrypt the Identity Envelope
@@ -87,8 +92,14 @@ def create_bid(bidder_id):
 
     bid_hash = sha256_hash(bid_json)
 
+    password = getpass.getpass("Enter your Bidder password to sign the bid: ")
+
     private_key_path = f"storage/keys/{bidder_id}/private.pem"
-    private_key = load_private_key(private_key_path)
+    try:
+        private_key = load_private_key(private_key_path, password)
+    except Exception as e:
+        print("Incorrect Bidder Password! Cannot sign the bid.")
+        return
 
     signature = sign_data(private_key, bid_hash)
 

@@ -28,11 +28,16 @@ def configure_procurement():
 def setup_authority():
     print("\n=== Authority Setup ===")
 
+    password = getpass.getpass("Create a Master Password to protect the Authority private key: ")
+    if not password:
+         print("Password cannot be empty!")
+         return
+
     os.makedirs(AUTHORITY_FOLDER, exist_ok=True)
 
     private_key, public_key = generate_ecc_keypair()
 
-    save_private_key(private_key, f"{AUTHORITY_FOLDER}/private.pem")
+    save_private_key(private_key, f"{AUTHORITY_FOLDER}/private.pem", password)
     save_public_key(public_key, f"{AUTHORITY_FOLDER}/public.pem")
 
     print("Authority keys generated successfully.")
@@ -107,7 +112,13 @@ def open_all_bids():
         print("Deadline not reached. Cannot open bids.")
         return
 
-    authority_private_key = load_private_key("storage/authority/private.pem")
+    print("\n[!] AUTHORITY AUTHORIZATION REQUIRED [!]")
+    auth_password = getpass.getpass("Enter Authority Master Password: ")
+    try:
+        authority_private_key = load_private_key("storage/authority/private.pem", auth_password)
+    except Exception as e:
+        print("Incorrect Authority Master Password! Access Denied.")
+        return
 
     bids_folder = "storage/bids"
 
@@ -229,7 +240,12 @@ def reveal_winner_identity():
         print(f"Error: Identity envelope not found for {bidder_id}.")
         return
 
-    authority_private_key = load_private_key("storage/authority/private.pem")
+    auth_password = getpass.getpass("Enter Authority Master Password to unlock identities vault: ")
+    try:
+        authority_private_key = load_private_key("storage/authority/private.pem", auth_password)
+    except Exception as e:
+        print("Incorrect Authority Master Password! Access Denied.")
+        return
 
     try:
         with open(identity_file, "r") as f:
