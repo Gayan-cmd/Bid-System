@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cseps:cseps@db:5432/cseps
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=60
+      - FRONTEND_URL=http://localhost:3000
+      - ENVIRONMENT=development
+      - RESEND_API_KEY=re_placeholder
+      - AUTHORITY_EMAIL=authority@cseps.local
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cseps
+      POSTGRES_PASSWORD: cseps
+      POSTGRES_DB: cseps
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cseps"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

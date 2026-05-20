@@ -1,9 +1,65 @@
 # Python caches
 __pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
 
 # Virtual environments
 .venv/
 venv/
 
+# Python packaging
+*.egg-info/
+dist/
+build/
+.tox/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.dev
+.env.test
+
 # Project storage (DO NOT DELETE THIS LINE)
 storage/
+.env.example
+.antigravitycli
+
+# Node.js / Next.js
+node_modules/
+.next/
+npm-debug.log
+npm-error.log
+yarn-error.log
+.npm
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Logs
+logs/
+*.log
+tmp/
+temp/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# AI
+AGENTS.md
+CLAUDE.md
